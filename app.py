@@ -12,6 +12,8 @@ from utils import (
     get_model_description,
     get_strategy_story,
     get_model_story,
+    get_strategy_hint,
+    get_model_hint,
 )
 
 # ----------------------------------------------------------------------
@@ -29,8 +31,8 @@ st.set_page_config(
 # ----------------------------------------------------------------------
 ACCENT = "#6C5CE7"
 ACCENT_SOFT = "#F6F4FE"
-GOOD = "#00B894"
-BAD = "#E17055"
+GOOD = "#009E73"  # Okabe-Ito bluish green - colorblind-safe
+BAD = "#D55E00"   # Okabe-Ito vermillion - colorblind-safe, distinguishable from GOOD
 
 st.markdown(f"""
 <style>
@@ -134,23 +136,23 @@ and by default, most models treat every mistake as equally bad. This tool lets y
 three different tricks for teaching it that, plus what it actually saves you in the end.
 """)
 
-st.markdown("#### 🧭 How to use this tool")
-c1, c2, c3, c4 = st.columns(4)
-steps = [
-    ("Pick your data", "Choose synthetic data, real credit card fraud data, or upload your own CSV on the left."),
-    ("Set your costs", "Tell the tool how bad a 'missed case' is versus a 'false alarm', in your own numbers."),
-    ("Pick a strategy", "Choose one of three ways to teach the model about those costs."),
-    ("See the payoff", "Watch the Total Misclassification Cost, the real-world price tag of getting it wrong."),
-]
-for col, (title, desc) in zip([c1, c2, c3, c4], steps):
-    with col:
-        st.markdown(f"""
-        <div class="step-card">
-            <div class="step-num">{steps.index((title, desc)) + 1}</div>
-            <b>{title}</b>
-            <p style="font-size:0.85rem; color:#555; margin-top:4px;">{desc}</p>
-        </div>
-        """, unsafe_allow_html=True)
+with st.expander("🧭 How to use this tool", expanded=False):
+    c1, c2, c3, c4 = st.columns(4)
+    steps = [
+        ("Pick your data", "Choose synthetic data, real credit card fraud data, or upload your own CSV on the left."),
+        ("Set your costs", "Tell the tool how bad a 'missed case' is versus a 'false alarm', in your own numbers."),
+        ("Pick a strategy", "Choose one of three ways to teach the model about those costs."),
+        ("See the payoff", "Watch the Total Misclassification Cost, the real-world price tag of getting it wrong."),
+    ]
+    for col, (title, desc) in zip([c1, c2, c3, c4], steps):
+        with col:
+            st.markdown(f"""
+            <div class="step-card">
+                <div class="step-num">{steps.index((title, desc)) + 1}</div>
+                <b>{title}</b>
+                <p style="font-size:0.85rem; color:#555; margin-top:4px;">{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 st.write("")
 
@@ -290,6 +292,7 @@ model_choice = st.sidebar.selectbox(
     "Base classifier",
     ["Logistic Regression", "Decision Tree", "Random Forest", "SVM"]
 )
+st.sidebar.caption(get_model_hint(model_choice))
 
 # 4. Strategy
 st.sidebar.subheader("4️⃣ Strategy")
@@ -297,6 +300,7 @@ strategy = st.sidebar.selectbox(
     "Cost-sensitive strategy",
     ["Threshold Moving", "Class Weighting", "Resampling (SMOTE)"]
 )
+st.sidebar.caption(get_strategy_hint(strategy))
 
 # ----------------------------------------------------------------------
 # Train models (including Cost-Blind Baseline)
@@ -585,7 +589,7 @@ with tab_perf:
 
     fig_perf = go.Figure()
     metric_colors = {"Accuracy": "#B2BEC3", "Balanced Accuracy": ACCENT,
-                      "Precision": GOOD, "Recall": "#FDCB6E", "F1-Score": "#E17055"}
+                      "Precision": GOOD, "Recall": "#FDCB6E", "F1-Score": BAD}
     for col in perf_df.columns:
         fig_perf.add_trace(go.Bar(
             name=col,
