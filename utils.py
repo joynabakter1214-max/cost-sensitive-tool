@@ -213,3 +213,23 @@ of the four guards to train.
     }
     return stories.get(model_type, "")
 
+
+def get_strategy_hint(strategy: str) -> str:
+    """One-line differentiator shown right next to the strategy picker itself."""
+    hints = {
+        "Threshold Moving": "Fastest option: adjusts the cutoff after training, no retraining needed.",
+        "Class Weighting": "Retrains the model so costly mistakes are penalised more heavily.",
+        "Resampling (SMOTE)": "Rebalances the training data itself before the model ever sees it.",
+    }
+    return hints.get(strategy, "")
+
+
+def get_model_hint(model_type: str) -> str:
+    """One-line differentiator shown right next to the model picker itself."""
+    hints = {
+        "Logistic Regression": "Fast and simple, gives clear probability scores.",
+        "Decision Tree": "Easy to see the exact yes/no rules behind each decision.",
+        "Random Forest": "A committee of trees voting together, usually more accurate.",
+        "SVM": "Finds the best possible boundary, slower but powerful.",
+    }
+    return hints.get(model_type, "")
