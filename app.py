@@ -482,6 +482,15 @@ order = ["Cost-Blind (0.5)", "Threshold Moving", "Class Weighting", "Resampling 
 cost_values = [results[name]["metrics"]["Total Cost"] for name in order]
 best_strat = min(order, key=lambda x: results[x]["metrics"]["Total Cost"])
 
+# Worst-case reference: the costlier of the two trivial "always guess the same answer" policies.
+# This is the exact Accuracy Paradox scenario from the top of the page, now with a real price tag.
+n_actual_pos = int(np.sum(y_test == 1))
+n_actual_neg = int(np.sum(y_test == 0))
+worst_always_negative = n_actual_pos * fn_cost   # never flag anything: every real positive becomes a costly FN
+worst_always_positive = n_actual_neg * fp_cost   # flag everything: every real negative becomes a FP
+worst_case_cost = max(worst_always_negative, worst_always_positive)
+worst_case_label = "always saying 'no'" if worst_always_negative >= worst_always_positive else "always saying 'yes'"
+
 bar_colors = [
     GOOD if name == best_strat else (PLOTLY_COLORS[i] if name != "Cost-Blind (0.5)" else "#B2BEC3")
     for i, name in enumerate(order)
@@ -497,6 +506,14 @@ fig = go.Figure(data=[
         hovertemplate="<b>%{x}</b><br>Total Cost: £%{y:,.0f}<extra></extra>",
     )
 ])
+fig.add_hline(
+    y=worst_case_cost,
+    line_dash="dash",
+    line_color=BAD,
+    annotation_text=f"Worst case ({worst_case_label} every time): £{worst_case_cost:,.0f}",
+    annotation_position="top left",
+    annotation_font_color=BAD,
+)
 fig.update_layout(
     title="Which strategy gives the lowest total cost? (Lower is better)",
     yaxis_title="Total Misclassification Cost (£)",
@@ -515,6 +532,7 @@ st.markdown("""
 **What this chart teaches you:**
 - The grey bar ignores your costs completely, it's the "before" picture
 - The coloured bars each use your cost settings, just applied at a different stage
+- The dashed red line is the worst case, giving the same answer every time no matter what. That's the Accuracy Paradox from earlier, now with a real price tag
 - Nudge the FN and FP cost sliders on the left and watch the winner change, that's the whole point!
 """)
 
