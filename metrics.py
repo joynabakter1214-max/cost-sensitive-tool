@@ -11,7 +11,6 @@ from sklearn.metrics import (
     f1_score,
     confusion_matrix
 )
-import numpy as np
 
 
 def calculate_metrics(y_true, y_pred, fn_cost: float = 10.0, fp_cost: float = 1.0):
