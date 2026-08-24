@@ -57,11 +57,7 @@ def train_model_by_strategy(
     # Strategy 2 — Class Weighting (during training)
     elif strategy == "Class Weighting":
         class_weight = {0: fp_cost, 1: fn_cost}
-        try:
-            model = BaseModel(**{**params, "class_weight": class_weight})
-        except TypeError:
-            # SVM uses a different parameter name
-            model = BaseModel(**{**params, "class_weight": class_weight})
+        model = BaseModel(**{**params, "class_weight": class_weight})
         model.fit(X_train, y_train)
         return model, 0.5
 
