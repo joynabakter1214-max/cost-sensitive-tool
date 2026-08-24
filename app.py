@@ -118,7 +118,7 @@ def fun_card(content: str):
     st.markdown(f'<div class="fun-card">{content}</div>', unsafe_allow_html=True)
 
 
-PLOTLY_COLORS = ["#B2BEC3", ACCENT, GOOD, "#FDCB6E"]
+PLOTLY_COLORS = ["#B2BEC3", ACCENT, "#56B4E9", "#FDCB6E"]  # grey, purple, sky blue, yellow - each strategy gets its own distinct, colorblind-safe color, separate from GOOD (used only for the actual winner)
 
 # ----------------------------------------------------------------------
 # TOP SECTION: Hero
