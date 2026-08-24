@@ -8,7 +8,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from imblearn.over_sampling import SMOTE
-import numpy as np
 
 
 def get_base_model(model_type: str):
