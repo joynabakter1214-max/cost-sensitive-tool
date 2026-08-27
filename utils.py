@@ -233,3 +233,36 @@ def get_model_hint(model_type: str) -> str:
         "SVM": "Finds the best possible boundary, slower but powerful.",
     }
     return hints.get(model_type, "")
+
+
+def get_metrics_story() -> str:
+    """A story-mode explanation of Precision, Recall, Accuracy, Balanced Accuracy and F1,
+    continuing the same security guard analogy used for the strategy and model stories."""
+    return """
+**🕵️ The Story: Grading the Guard's Report Card**
+
+After a long shift, the guard's manager sits down to review how it actually went. Grading a guard
+isn't as simple as "good" or "bad", there are a few different report cards, and each one asks a
+different question.
+
+**Precision** asks: *"Of everyone you stopped and searched, how many were actually carrying something
+dangerous?"* A guard with low precision is the boy who cried wolf, so many false alarms that people
+stop taking the warnings seriously.
+
+**Recall** asks the opposite question: *"Of everyone who really was dangerous, how many did you
+actually catch?"* A guard with low recall has the reverse problem, real threats slipping past
+unnoticed.
+
+**Accuracy** is the guard's overall scorecard, right calls out of every call made. Sounds fair, until
+you remember: if only one real threat shows up out of a thousand people, a guard who does nothing at
+all and just waves everyone through still scores 99.9%. That's the Accuracy Paradox again, showing up
+here too.
+
+**Balanced Accuracy** fixes that trick. Instead of one combined score, the manager grades the guard
+separately on "how'd you do with the real threats" and "how'd you do with everyone else", then
+averages the two. A guard who's great with harmless people but hopeless with real threats can't hide
+behind a good-looking single number anymore.
+
+**F1-Score** is for a manager in a hurry, one single number that balances "not crying wolf too often"
+against "not letting threats slip past", so you don't have to weigh two report cards separately.
+"""
