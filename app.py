@@ -14,6 +14,7 @@ from utils import (
     get_model_story,
     get_strategy_hint,
     get_model_hint,
+    get_metrics_story,
 )
 
 # ----------------------------------------------------------------------
@@ -615,6 +616,9 @@ with tab_perf:
         **F1-Score** — one single number that balances Precision and Recall together, handy for a quick
         overall sense without having to weigh the two separately.
         """)
+
+    with st.expander("📖 Tell me a story instead"):
+        st.markdown(get_metrics_story())
 
     perf_order = ["Cost-Blind (0.5)", "Threshold Moving", "Class Weighting", "Resampling (SMOTE)"]
     perf_data = {
