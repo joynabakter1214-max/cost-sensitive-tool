@@ -542,6 +542,11 @@ st.divider()
 # Confusion Matrix & Performance Metrics: as tabs
 # ----------------------------------------------------------------------
 st.subheader("🔎 Look Under the Hood")
+fun_card("""
+The Total Cost number above is the headline, but you don't have to just take it on faith. This section
+shows the actual numbers it's built from, so you can check the maths yourself, and see the classic
+metrics data scientists use, to compare against.
+""")
 tab_cm, tab_perf = st.tabs(["🧩 Confusion Matrix", "📈 Performance Metrics"])
 
 with tab_cm:
@@ -591,6 +596,25 @@ with tab_perf:
     great even when the Total Cost is high</b>, that's the Accuracy Paradox from earlier, showing up
     in real numbers.
     """)
+
+    with st.expander("💡 What do these metrics actually mean?", expanded=False):
+        st.markdown("""
+        **Precision** — of everything the model flagged as positive, how much was actually correct?
+        A model with low precision cries wolf a lot.
+
+        **Recall** — of everything that was actually positive, how much did the model actually catch?
+        A model with low recall misses a lot of real cases.
+
+        **Accuracy** — the fraction of all predictions that were correct. Looks great on paper, but can
+        hide a genuinely bad model when the data is imbalanced, that's the Accuracy Paradox.
+
+        **Balanced Accuracy** — averages the accuracy of each class separately, instead of lumping
+        everything together. A model that's perfect on the easy majority class and terrible on the rare
+        one gets caught immediately here, instead of hidden behind one flattering number.
+
+        **F1-Score** — one single number that balances Precision and Recall together, handy for a quick
+        overall sense without having to weigh the two separately.
+        """)
 
     perf_order = ["Cost-Blind (0.5)", "Threshold Moving", "Class Weighting", "Resampling (SMOTE)"]
     perf_data = {
