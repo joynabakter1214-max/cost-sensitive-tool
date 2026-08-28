@@ -585,6 +585,15 @@ with tab_cm:
     | **Actually Positive** | ❌ FN = {current_metrics['FN']} (missed) | ✅ TP = {current_metrics['TP']} (correct) |
     """)
 
+    tp, fp, fn = current_metrics["TP"], current_metrics["FP"], current_metrics["FN"]
+    st.caption(
+        f"**Precision** = TP ÷ (TP + FP) = {tp} ÷ ({tp} + {fp}) = **{current_metrics['Precision']:.0%}**"
+    )
+    st.caption(
+        f"**Recall** = TP ÷ (TP + FN) = {tp} ÷ ({tp} + {fn}) = **{current_metrics['Recall']:.0%}**"
+    )
+    st.caption("These numbers come straight from the table above, feel free to check them on a calculator.")
+
     st.markdown("""
     <span class="pill pill-good">TP / TN = correct</span>
     <span class="pill pill-bad">FP / FN = mistakes</span>
