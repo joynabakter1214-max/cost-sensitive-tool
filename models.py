@@ -62,8 +62,26 @@ def train_model_by_strategy(
 
     # Strategy 3 — Resampling with SMOTE (pre-training)
     elif strategy == "Resampling (SMOTE)":
-        smote = SMOTE(random_state=42)
-        X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+        # How aggressively we rebalance now scales with the same cost proportion Elkan's
+        # formula uses. weight -> 1 (FN far costlier) resamples all the way to full balance.
+        # weight -> 0 (FP costlier) leaves the natural class balance mostly untouched.
+        # Capped at full balance since basic SMOTE only oversamples the minority class.
+        n_minority = int((y_train == 1).sum())
+        n_majority = int((y_train == 0).sum())
+        current_ratio = n_minority / n_majority if n_majority > 0 else 1.0
+        weight = fn_cost / (fn_cost + fp_cost)
+        target_ratio = current_ratio + weight * (1.0 - current_ratio)
+
+        try:
+            smote = SMOTE(sampling_strategy=target_ratio, random_state=42)
+            X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+        except ValueError:
+            # The requested ratio landed too close to the data's natural balance for SMOTE
+            # to generate any new samples (happens when FP cost heavily outweighs FN cost,
+            # so almost no extra weight lands on the rare class). A ratio that close to
+            # "no change" should mean exactly that, train on the data as it already is.
+            X_resampled, y_resampled = X_train, y_train
+
         model = BaseModel(**params)
         model.fit(X_resampled, y_resampled)
         return model, 0.5
