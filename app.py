@@ -243,6 +243,20 @@ elif data_source == "Credit Card Fraud (Real)":
 
 else:
     st.sidebar.caption("Bring your own data. Last column must be 0/1 (the outcome you're predicting).")
+    with st.sidebar.expander("📋 What should my CSV look like?"):
+        st.markdown("Any number of feature columns, followed by one target column containing only 0s and 1s:")
+        example_df = pd.DataFrame({
+            "transaction_amount": [12.50, 340.00, 8.99, 1200.00],
+            "time_of_day": [14, 2, 16, 3],
+            "is_fraud": [0, 1, 0, 1],
+        })
+        st.dataframe(example_df, use_container_width=True)
+        st.download_button(
+            "⬇️ Download this as a starter CSV",
+            data=example_df.to_csv(index=False),
+            file_name="example_data.csv",
+            mime="text/csv",
+        )
     uploaded_file = st.sidebar.file_uploader("Upload CSV (last column = target 0/1)", type=["csv"])
     if uploaded_file is None:
         st.sidebar.warning("Please upload a CSV file.")
