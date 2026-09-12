@@ -72,17 +72,54 @@ def load_custom_data(uploaded_file, test_size: float = 0.30, random_state: int =
     """
     Load user-uploaded CSV.
     The last column is treated as the target (must contain only 0 and 1).
+    Validates common mistakes with specific, actionable error messages,
+    rather than letting a confusing internal error surface to the user.
     """
     df = pd.read_csv(uploaded_file)
+
+    if df.shape[1] < 2:
+        raise ValueError(
+            f"Your file only has {df.shape[1]} column(s). You need at least one feature "
+            "column plus a target column (2 columns minimum)."
+        )
+
     target_name = df.columns[-1]
     feature_names = df.columns[:-1].tolist()
 
-    X = df[feature_names].values
-    y = df[target_name].values
+    X_df = df[feature_names]
+    y_df = df[target_name]
 
-    unique = np.unique(y)
+    if X_df.isnull().values.any() or y_df.isnull().values.any():
+        raise ValueError(
+            "Your file contains missing (empty) cells. Please fill them in or remove those "
+            "rows before uploading."
+        )
+
+    non_numeric = [c for c in feature_names if not pd.api.types.is_numeric_dtype(df[c])]
+    if non_numeric:
+        raise ValueError(
+            f"These feature column(s) contain non-numeric data: {', '.join(non_numeric)}. "
+            "All feature columns must contain only numbers (convert text categories to "
+            "numbers first, or remove those columns)."
+        )
+
+    unique = sorted(pd.unique(y_df))
     if not set(unique).issubset({0, 1}):
-        raise ValueError("Target column must contain only 0 and 1.")
+        raise ValueError(
+            f"Your target column ('{target_name}') contains these values: {unique}. "
+            "It must contain only 0 and 1."
+        )
+
+    X = X_df.values
+    y = y_df.values
+
+    smallest_class_count = int(min((y == 0).sum(), (y == 1).sum()))
+    if smallest_class_count < 2:
+        raise ValueError(
+            f"Your rarer class only has {smallest_class_count} example(s) in the target "
+            f"column ('{target_name}'). You need at least 2 examples of each class (0 and 1) "
+            "to split the data into training and test sets."
+        )
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=test_size, stratify=y, random_state=random_state
