@@ -244,15 +244,28 @@ elif data_source == "Credit Card Fraud (Real)":
 else:
     st.sidebar.caption("Bring your own data. Last column must be 0/1 (the outcome you're predicting).")
     with st.sidebar.expander("📋 What should my CSV look like?"):
-        st.markdown("Any number of feature columns, followed by one target column containing only 0s and 1s:")
+        st.markdown(
+            "Works for **any** yes/no outcome, any field. Feature columns first, "
+            "then one target column of 0s and 1s. Two examples:"
+        )
+        st.caption("Example: fraud detection")
         example_df = pd.DataFrame({
             "transaction_amount": [12.50, 340.00, 8.99, 1200.00],
             "time_of_day": [14, 2, 16, 3],
             "is_fraud": [0, 1, 0, 1],
         })
         st.dataframe(example_df, use_container_width=True)
+
+        st.caption("Example: medical screening (same shape, different field)")
+        example_df2 = pd.DataFrame({
+            "patient_age": [45, 30, 68, 22],
+            "blood_pressure": [145, 118, 160, 110],
+            "has_disease": [1, 0, 1, 0],
+        })
+        st.dataframe(example_df2, use_container_width=True)
+
         st.download_button(
-            "⬇️ Download this as a starter CSV",
+            "⬇️ Download a starter CSV",
             data=example_df.to_csv(index=False),
             file_name="example_data.csv",
             mime="text/csv",
