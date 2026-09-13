@@ -249,6 +249,7 @@ else:
             "then one target column of 0s and 1s. Two examples:"
         )
         st.caption("Example: fraud detection")
+        st.caption("(time_of_day uses 24-hour format: 14 = 2pm, 2 = 2am)")
         example_df = pd.DataFrame({
             "transaction_amount": [12.50, 340.00, 8.99, 1200.00],
             "time_of_day": [14, 2, 16, 3],
