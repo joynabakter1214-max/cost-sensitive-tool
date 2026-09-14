@@ -154,6 +154,11 @@ with st.expander("🧭 How to use this tool", expanded=False):
                 <p style="font-size:0.85rem; color:#555; margin-top:4px;">{desc}</p>
             </div>
             """, unsafe_allow_html=True)
+    st.caption(
+        "🤖 Built with AI-assisted development: AI tools were used to help draft and accelerate "
+        "parts of this codebase during implementation. All logic was reviewed, tested, and in "
+        "places corrected by the author, who takes responsibility for the tool's correctness."
+    )
 
 st.write("")
 
@@ -606,12 +611,10 @@ with tab_cm:
     )
     st.plotly_chart(fig_cm, use_container_width=True)
 
-    st.markdown(f"""
-    | | Predicted Negative | Predicted Positive |
-    |---|---|---|
-    | **Actually Negative** | ✅ TN = {current_metrics['TN']} (correct) | 🚨 FP = {current_metrics['FP']} (false alarm) |
-    | **Actually Positive** | ❌ FN = {current_metrics['FN']} (missed) | ✅ TP = {current_metrics['TP']} (correct) |
-    """)
+    st.caption(
+        "Top-left = correctly said no (TN) · Top-right = false alarm (FP) · "
+        "Bottom-left = missed case (FN) · Bottom-right = correctly caught (TP)"
+    )
 
     tp, fp, fn = current_metrics["TP"], current_metrics["FP"], current_metrics["FN"]
     st.caption(
