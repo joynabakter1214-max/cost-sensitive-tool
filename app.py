@@ -471,6 +471,11 @@ with col_before:
     st.markdown("##### 😐 Before, Cost-Blind Model")
     st.metric("Total Cost", f"£{baseline_cost:,.0f}")
     st.caption("Plain 50/50 cutoff. Has never heard about your cost settings.")
+    st.caption(
+        f"{baseline_metrics['FN']} missed × £{fn_cost:.0f} "
+        f"+ {baseline_metrics['FP']} false alarms × £{fp_cost:.0f} "
+        f"= £{baseline_cost:,.0f}"
+    )
 
 with col_after:
     if st.session_state.reveal_strategy:
@@ -482,6 +487,11 @@ with col_after:
             delta_color="normal" if savings >= 0 else "inverse",
         )
         st.caption(f"Uses {strategy}, tuned to your exact cost settings.")
+        st.caption(
+            f"{current_metrics['FN']} missed × £{fn_cost:.0f} "
+            f"+ {current_metrics['FP']} false alarms × £{fp_cost:.0f} "
+            f"= £{strategy_cost:,.0f}"
+        )
     else:
         st.markdown("##### ❔ After, ???")
         st.metric("Total Cost", "£ ? ? ?")
@@ -591,32 +601,15 @@ with tab_cm:
     """)
 
     cm = current_metrics["Confusion Matrix"]
-    labels = ["Class 0 (Negative)", "Class 1 (Positive)"]
+    tn, fp, fn, tp = current_metrics["TN"], current_metrics["FP"], current_metrics["FN"], current_metrics["TP"]
 
-    z = cm
-    fig_cm = px.imshow(
-        z,
-        text_auto=True,
-        color_continuous_scale=["#F6F4FE", ACCENT],
-        labels=dict(x="Predicted", y="Actually", color="Count"),
-        x=labels,
-        y=labels,
-    )
-    fig_cm.update_traces(textfont_size=18, textfont_color="white")
-    fig_cm.update_layout(
-        height=420,
-        font=dict(family="Inter, sans-serif", size=13),
-        margin=dict(t=20),
-        coloraxis_showscale=False,
-    )
-    st.plotly_chart(fig_cm, use_container_width=True)
+    st.markdown(f"""
+    | | Predicted Negative | Predicted Positive |
+    |---|---|---|
+    | **Actually Negative** | ✅ TN = {tn} (correct) | 🚨 FP = {fp} (false alarm) |
+    | **Actually Positive** | ❌ FN = {fn} (missed) | ✅ TP = {tp} (correct) |
+    """)
 
-    st.caption(
-        "Top-left = correctly said no (TN) · Top-right = false alarm (FP) · "
-        "Bottom-left = missed case (FN) · Bottom-right = correctly caught (TP)"
-    )
-
-    tp, fp, fn = current_metrics["TP"], current_metrics["FP"], current_metrics["FN"]
     st.caption(
         f"**Precision** = TP ÷ (TP + FP) = {tp} ÷ ({tp} + {fp}) = **{current_metrics['Precision']:.0%}**"
     )
