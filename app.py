@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 from data import generate_synthetic_data, load_custom_data, load_creditcard_data
-from models import train_model_by_strategy, predict_with_threshold
+from models import train_model_by_strategy, predict_with_threshold, get_base_model
 from metrics import calculate_metrics
 from utils import (
     get_strategy_description,
@@ -754,6 +754,20 @@ fun_card(get_model_description(model_choice))
 
 with st.expander("📖 Tell me a story instead"):
     st.markdown(get_model_story(model_choice))
+
+PARAM_JUSTIFICATIONS = {
+    "max_depth": "limits how many yes/no questions deep the tree can go, kept shallow so it stays readable and doesn't just memorise the training data",
+    "n_estimators": "number of individual trees voting together, 100 is a standard, well-tested balance between accuracy and training speed",
+    "max_iter": "how many attempts the optimiser gets to find the best line, raised above scikit-learn's default so it reliably finishes even on harder-to-separate data",
+    "probability": "required, not a choice, Threshold Moving needs an actual confidence score, not just a plain yes/no answer",
+    "random_state": "fixes the randomness so the exact same result comes back every time this model runs, kept identical across all four models so comparisons are fair",
+}
+
+with st.expander("🔧 Parameters used for this model"):
+    _, live_params = get_base_model(model_choice)
+    for param_name, param_value in live_params.items():
+        justification = PARAM_JUSTIFICATIONS.get(param_name, "")
+        st.markdown(f"- **`{param_name} = {param_value}`** — {justification}")
 
 with st.expander("🧩 Why these four models were chosen"):
     st.markdown("""
