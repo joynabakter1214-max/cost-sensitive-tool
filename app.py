@@ -500,6 +500,13 @@ with col_before:
         f"+ {baseline_metrics['FP']} false alarms × £{fp_cost:.0f} "
         f"= £{baseline_cost:,.0f}"
     )
+    if baseline_metrics['FN'] != baseline_metrics['FP']:
+        st.caption(
+            f"👆 Note: \"50/50\" means the model needs 50% confidence before saying yes, "
+            f"it does **not** mean equal mistakes. {baseline_metrics['FN']} missed vs "
+            f"{baseline_metrics['FP']} false alarms above, clearly not equal, proves the two ideas "
+            f"are unrelated."
+        )
 
 with col_after:
     if st.session_state.reveal_strategy:
