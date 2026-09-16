@@ -684,6 +684,25 @@ with tab_perf:
     with st.expander("📖 Tell me a story instead"):
         st.markdown(get_metrics_story())
 
+    tn, fp, fn, tp = current_metrics["TN"], current_metrics["FP"], current_metrics["FN"], current_metrics["TP"]
+    total = tp + tn + fp + fn
+    recall_pos = tp / (tp + fn) if (tp + fn) > 0 else 0
+    recall_neg = tn / (tn + fp) if (tn + fp) > 0 else 0
+    prec = current_metrics["Precision"]
+    rec = current_metrics["Recall"]
+
+    st.caption(
+        f"**Accuracy** = (TP + TN) ÷ Total = ({tp} + {tn}) ÷ {total} = **{current_metrics['Accuracy']:.0%}**"
+    )
+    st.caption(
+        f"**Balanced Accuracy** = (Recall on positives + Recall on negatives) ÷ 2 "
+        f"= ({recall_pos:.0%} + {recall_neg:.0%}) ÷ 2 = **{current_metrics['Balanced Accuracy']:.0%}**"
+    )
+    st.caption(
+        f"**F1-Score** = 2 × (Precision × Recall) ÷ (Precision + Recall) "
+        f"= 2 × ({prec:.0%} × {rec:.0%}) ÷ ({prec:.0%} + {rec:.0%}) = **{current_metrics['F1-Score']:.0%}**"
+    )
+
     perf_order = ["Cost-Blind (0.5)", "Threshold Moving", "Class Weighting", "Resampling (SMOTE)"]
     perf_data = {
         name: {
