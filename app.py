@@ -425,6 +425,21 @@ elif strategy == "Class Weighting":
         f"The model then adjusts itself during training to minimise *this* weighted total, "
         f"not the plain mistake count, so it works harder to avoid the costlier mistake."
     )
+elif strategy == "Resampling (SMOTE)":
+    n_minority = int((y_train == 1).sum())
+    n_majority = int((y_train == 0).sum())
+    current_ratio = n_minority / n_majority if n_majority > 0 else 1.0
+    weight = fn_cost / (fn_cost + fp_cost)
+    target_ratio = current_ratio + weight * (1.0 - current_ratio)
+    st.info(
+        f"📐 Resampling ratio: weight = FN cost ÷ (FN cost + FP cost) "
+        f"= {fn_cost:.0f} ÷ ({fn_cost:.0f} + {fp_cost:.0f}) = {weight:.3f}\n\n"
+        f"target ratio = current ratio + weight × (1 − current ratio)  "
+        f"= {current_ratio:.3f} + {weight:.3f} × (1 − {current_ratio:.3f}) = **{target_ratio:.3f}**\n\n"
+        f"Your training data naturally has a {current_ratio:.1%} minority-to-majority ratio; "
+        f"SMOTE creates synthetic examples to push that toward {target_ratio:.1%}, more aggressively "
+        f"when missing a case (FN) is the costlier mistake."
+    )
 
 # Real world domain examples: as tabs, more fun than a wall of bullets
 st.markdown("#### 🌍 Where does this show up in real life?")
