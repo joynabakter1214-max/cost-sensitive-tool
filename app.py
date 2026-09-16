@@ -416,6 +416,15 @@ if strategy == "Threshold Moving":
         f"📐 Elkan's formula: threshold = FP cost ÷ (FP cost + FN cost) "
         f"= {fp_cost} ÷ ({fp_cost} + {fn_cost}) = **{fp_cost/(fp_cost+fn_cost):.3f}**"
     )
+elif strategy == "Class Weighting":
+    st.info(
+        f"📐 Weighted loss: instead of counting every mistake as 1, each mistake is "
+        f"multiplied by its class's cost before the model adds them up:\n\n"
+        f"Weighted Loss = (Class 0 mistakes × FP cost) + (Class 1 mistakes × FN cost)  "
+        f"= (Class 0 mistakes × {fp_cost:.0f}) + (Class 1 mistakes × {fn_cost:.0f})\n\n"
+        f"The model then adjusts itself during training to minimise *this* weighted total, "
+        f"not the plain mistake count, so it works harder to avoid the costlier mistake."
+    )
 
 # Real world domain examples: as tabs, more fun than a wall of bullets
 st.markdown("#### 🌍 Where does this show up in real life?")
