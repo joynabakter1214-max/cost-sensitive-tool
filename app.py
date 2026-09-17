@@ -220,6 +220,22 @@ data_source = st.sidebar.radio(
 
 if data_source == "Synthetic Data":
     st.sidebar.caption("Fake, made-up data you can shape however you like, great for experimenting freely.")
+    with st.sidebar.expander("🎲 How is this data actually made?"):
+        st.markdown(
+            "This isn't collected from anywhere, it's generated on the spot using "
+            "scikit-learn's `make_classification` function, a standard, widely-used tool "
+            "for building test data with known, controllable properties.\n\n"
+            "The three sliders below map directly onto its real parameters:\n"
+            "- **Number of samples** → how many data points to create in total\n"
+            "- **Majority class proportion** → what percentage lands in the common class, "
+            "the rest is the rare, costly class you're trying to catch\n"
+            "- **Class Separation** → how far apart the two classes sit from each other; "
+            "low means they overlap and are genuinely hard to tell apart, high means "
+            "they're cleanly separated\n\n"
+            "Because you control these directly, you can dial the accuracy paradox up or "
+            "down on demand, for example pushing the majority proportion to 99%, rather "
+            "than hoping to find a real dataset that happens to show it."
+        )
     imbalance_ratio = st.sidebar.select_slider(
         "Majority class proportion (Class 0)",
         options=[0.50, 0.70, 0.80, 0.90, 0.95, 0.99],
